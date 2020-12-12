@@ -2,11 +2,16 @@
 
 public class FloorMovement : MonoBehaviour
 {
-    [Range(0,10)]
+    [Range(-10,10)]
     public float _speed, _moveLimit;
 
     private void Update()
     {
-        transform.localEulerAngles = new Vector3(0, 0, -_moveLimit + Mathf.PingPong(Time.time * _speed, _moveLimit * 2));
+        transform.Rotate(0, 0, _speed * Time.deltaTime * 10);
+        /*
+        float speed = Time.time * _speed;
+        float move = -_moveLimit + Mathf.PingPong(speed, _moveLimit * 2);
+        transform.localEulerAngles = new Vector3(0, 0, move);
+        */
     }
 }

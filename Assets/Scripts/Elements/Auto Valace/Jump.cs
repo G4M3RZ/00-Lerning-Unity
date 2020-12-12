@@ -2,33 +2,35 @@
 
 public class Jump : MonoBehaviour
 {
-    [Range(0,10)]
-    public float _jumpForce;
-    private Rigidbody _rgb;
+    [Range(0, 10)]
+    public float _speed, _jumpForce;
+
+    private CharacterController _ch;
+    private Vector3 playerVelocity;
+    private float _gravity;
+
     private AutoValace _autoValance;
-    private bool _jump;
 
     private void Awake()
     {
-        _rgb = GetComponent<Rigidbody>();
+        _gravity = Physics.gravity.y;
+        _ch = GetComponent<CharacterController>();
+
         _autoValance = GetComponent<AutoValace>();
     }
     void Update()
     {
-        if (!_jump)
-        {
-            _autoValance.Valance(transform.localPosition);
+        bool grounded = _ch.isGrounded;
 
-            if (Input.GetKeyDown(KeyCode.Space))
-            {
-                _rgb.AddForce(transform.up * _jumpForce, ForceMode.Impulse);
-                _jump = true;
-            }
-        }
-    }
-    private void OnCollisionEnter(Collision collision)
-    {
-        if (_jump)
-            _jump = false;
+        if (Input.GetButtonDown("Jump") && grounded)
+            playerVelocity.y += Mathf.Sqrt(_jumpForce * -3.0f * _gravity);
+
+        if (!grounded)
+            playerVelocity += transform.up * _gravity * Time.deltaTime;
+
+        playerVelocity += transform.forward * _speed * Time.deltaTime;
+        _ch.Move(playerVelocity);
+
+        _autoValance.Valance(transform.position);
     }
 }
